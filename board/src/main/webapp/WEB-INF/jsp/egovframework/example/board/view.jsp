@@ -62,6 +62,7 @@ function del(){
 	document.form1.submit();
 }
 function getfile(filename){
+	//alert("<c:url value='/fileGet.do'/>?filename="+encodeURI(filename));
 	location.href = "<c:url value='/fileGet.do'/>?filename="+filename;
 }
 function delfile(seq,filename){

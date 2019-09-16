@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -188,54 +189,65 @@ public class EgovFileMngUtil {
 		String downFileName = "";
 		String orgFileName = "";
 
-		if ((String) request.getAttribute("downFile") == null) {
-			downFileName = "";
-		} else {
-			downFileName = (String) request.getAttribute("downFile");
-			//2017.02.07 	이정은 	시큐어코딩(ES)-경로 조작 및 자원 삽입[CWE-22, CWE-23, CWE-95, CWE-99]
-			//downFileName = EgovWebUtil.fileInjectPathReplaceAll(downFileName);
-		}
-
-		if ((String) request.getAttribute("orginFile") == null) {
-			orgFileName = "";
-		} else {
-			orgFileName = (String) request.getAttribute("orginFile");
-		}
-
-		orgFileName = orgFileName.replaceAll("\r", "").replaceAll("\n", "");
-		orgFileName = orgFileName.substring(orgFileName.lastIndexOf("/")+1); //폴더 경로 제외 추가
-
-		File file = new File(EgovWebUtil.filePathBlackList(downFileName));
-
-		if (!file.exists()) {
-			throw new FileNotFoundException(downFileName);
-		}
-
-		if (!file.isFile()) {
-			throw new FileNotFoundException(downFileName);
-		}
-
-		byte[] buffer = new byte[BUFF_SIZE]; //buffer size 2K.
-
-		response.setContentType("application/x-msdownload");
-		response.setHeader("Content-Disposition:", "attachment; filename=" + new String(orgFileName.getBytes(), "UTF-8"));
-		response.setHeader("Content-Transfer-Encoding", "binary");
-		response.setHeader("Pragma", "no-cache");
-		response.setHeader("Expires", "0");
-
-		BufferedInputStream fin = null;
-		BufferedOutputStream outs = null;
-
-		try {
-			fin = new BufferedInputStream(new FileInputStream(file));
-			outs = new BufferedOutputStream(response.getOutputStream());
-			int read = 0;
-
-			while ((read = fin.read(buffer)) != -1) {
-				outs.write(buffer, 0, read);
+		try{
+			if ((String) request.getAttribute("downFile") == null) {
+				downFileName = "";
+			} else {
+				downFileName = (String) request.getAttribute("downFile");
+				//2017.02.07 	이정은 	시큐어코딩(ES)-경로 조작 및 자원 삽입[CWE-22, CWE-23, CWE-95, CWE-99]
+				//downFileName = EgovWebUtil.fileInjectPathReplaceAll(downFileName);
 			}
-		} finally {
-			EgovResourceCloseHelper.close(outs, fin);
+	
+			if ((String) request.getAttribute("orginFile") == null) {
+				orgFileName = "";
+			} else {
+				orgFileName = (String) request.getAttribute("orginFile");
+			}
+			System.out.println("downFileName:"+downFileName);
+	
+			orgFileName = orgFileName.replaceAll("\r", "").replaceAll("\n", "");
+			orgFileName = orgFileName.substring(orgFileName.lastIndexOf("/")+1); //폴더 경로 제외 추가
+	
+			File file = new File(EgovWebUtil.filePathBlackList(downFileName));
+	
+			if (!file.exists()) {
+				throw new FileNotFoundException(downFileName);
+			}
+	
+			if (!file.isFile()) {
+				throw new FileNotFoundException(downFileName);
+			}
+			//orgFileName = new String(orgFileName.getBytes(), "UTF-8");
+			orgFileName = URLEncoder.encode(orgFileName, "UTF-8"); //한글파일명 깨질경우
+			orgFileName = orgFileName.replace("+", " "); //한글파일명 깨질경우
+			System.out.println("orgFileName:"+orgFileName);
+	
+			byte[] buffer = new byte[BUFF_SIZE]; //buffer size 2K.
+	
+			response.setContentLength((int)file.length());
+			response.setContentType("application/x-msdownload; charset=utf-8");
+			//response.setContentType("application/smnet; charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment; filename=" + orgFileName + ";"); //크롬에서 이상하게 다운로드될때
+			response.setHeader("Content-Transfer-Encoding", "binary");
+			response.setHeader("Pragma", "no-cache");
+			response.setHeader("Expires", "0");
+	
+			BufferedInputStream fin = null;
+			BufferedOutputStream outs = null;
+	
+			try {
+				fin = new BufferedInputStream(new FileInputStream(file));
+				outs = new BufferedOutputStream(response.getOutputStream());
+				int read = 0;
+	
+				while ((read = fin.read(buffer)) != -1) {
+					outs.write(buffer, 0, read);
+				}
+			} finally {
+				EgovResourceCloseHelper.close(outs, fin);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 
@@ -267,10 +279,12 @@ public class EgovFileMngUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/");
 		Calendar c1 = Calendar.getInstance();
 		String folder = sdf.format(c1.getTime());
-		String newName2 = folder + newName;
+		//String newName2 = folder + newName; //파일명 변경해서
+		String newName2 = folder + orginFileName; //파일명 그대로 저장
 		//=====여기까지
 		
-		writeFile(file, newName, stordFilePath);
+		//writeFile(file, newName, stordFilePath); //파일명 변경해서
+		writeFile(file, orginFileName, stordFilePath); //파일명 그대로 저장
 		//storedFilePath는 지정
 		map.put(Globals.ORIGIN_FILE_NM, orginFileName);
 		map.put(Globals.UPLOAD_FILE_NM, newName2);

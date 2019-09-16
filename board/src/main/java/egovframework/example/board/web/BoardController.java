@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -139,6 +140,7 @@ public class BoardController {
 			 
 			while (fileIter.hasNext()) {
 				MultipartFile mFile = mptRequest.getFile((String)fileIter.next());
+				System.out.println("filename:"+mFile.getOriginalFilename());
 			 
 				if (mFile.getSize() > 0) {
 					
@@ -177,6 +179,9 @@ public class BoardController {
 		 
 		// 저장된 파일명
 		String filename = request.getParameter("filename");
+		//System.out.println("filename:"+filename);
+		//filename = URLDecoder.decode(filename, "UTF-8");
+		//System.out.println("filename2:"+filename);
 		// 첨부된 원 파일명
 		String original = request.getParameter("original");
 		 
@@ -187,7 +192,7 @@ public class BoardController {
 		request.setAttribute("downFile", stordFilePath + filename);
 		request.setAttribute("orginFile", original);
 		
-		System.out.println("download:"+(stordFilePath + filename));
+		//System.out.println("download:"+(stordFilePath + filename));
 		 
 		EgovFileMngUtil.downFile(request, response);
 	}
