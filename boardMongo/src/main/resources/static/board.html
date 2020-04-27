@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>boardMongo</title>
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-3.4.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script type="text/javaScript" language="javascript" defer="defer">
+function save(){
+	alert('save');
+}
+function cancel(){
+	alert('cancel');
+}
+function del(){
+	alert('del');
+}
+function delimg(){
+	alert('delimg');
+}
+</script>
+</head>
+<body>
+<div class="card">
+	<h1>html board</h1>
+	<div class="card-header">
+		<ul class="nav nav-tabs">
+		  <li class="nav-item">
+		    <a class="nav-link active" href="#">싱글이미지 게시판</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link" href="#">멀티이미지 게시판</a>
+		  </li>
+		</ul>
+	</div>
+    <div class="card-body">
+    	<div class="row">
+			<div class="col-lg-4">
+				<div class="card" style="min-height:500px;max-height:1000px">
+					<table class="table">
+					    <thead>
+					      <tr>
+					        <th>게시물 리스트</th>
+					      </tr>
+					    </thead>
+					    <tbody>
+					      <tr>
+					        <td>안녕하세요</td>
+					      </tr>
+					      <tr>
+					        <td>반갑습니다</td>
+					      </tr>
+					      <tr>
+					        <td>고맙습니다</td>
+					      </tr>
+					    </tbody>
+					  </table>
+				</div>
+			</div>
+			<div class="col-lg-5">
+				<div class="card bg-light text-dark" style="min-height:500px;max-height:1000px">
+					<form action="">
+					  <div class="form-group">
+					    <label class="control-label" for="title">제목:</label>
+					    <div>
+					      <input type="text" class="form-control" id="title" placeholder="제목을 입력하세요">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label class="control-label" for="contents">내용:</label>
+					    <div> 
+					      <textarea class="form-control" rows="10" id="contents"></textarea>
+					    </div>
+					  </div>
+					  <div className="form-group">
+							<label className="control-label">이미지첨부: jpg,gif,png</label>
+							<div>
+							    <input type="file" className="form-control" name="file" style="width:90%" />
+							</div>
+					  </div>
+					</form>
+					<div style="text-align:center">
+						<div class="btn-group">
+						  <button type="button" class="btn btn-primary" onclick="save()">저장</button>
+						  <button type="button" class="btn btn-secondary" onclick="cancel()">취소</button>
+						  <button type="button" class="btn btn-danger" onclick="del()">삭제</button>
+						  <button type="button" class="btn btn-info" onclick="delimg()">그림삭제</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3">
+				<div class="card bg-light text-dark" style="min-height:500px;max-height:1000px">이미지 미리보기</div>
+			</div>
+		</div>
+    </div>
+    <div class="card-footer">SpringBoot + MongoDB + jquery + bootstrap4 게시판 만들기</div>
+</div>
+</body>
+</html>
